@@ -1,0 +1,58 @@
+/* Colors come from config.toml ([colors]). Edit them there, not here. */
+
+:root,
+.card {
+  --hz-stroke: %%stroke%%;
+  --hz-outline: %%outline%%;
+  --hz-radical: %%radical%%;
+  --hz-highlight: %%highlight%%;
+}
+
+.card {
+  font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: 20px;
+  text-align: center;
+}
+
+/* Anki (desktop) and AnkiDroid add one of these classes in night mode, on the card
+   or on a parent element. All the combinations are listed so it works everywhere. */
+.nightMode,
+.night_mode,
+.nightMode .card,
+.night_mode .card,
+.card.nightMode,
+.card.night_mode {
+  --hz-stroke: %%stroke_night%%;
+  --hz-outline: %%outline_night%%;
+}
+
+.hanzi {
+  font-size: 48px;
+  line-height: 1.3;
+}
+
+.pinyin {
+  font-size: 26px;
+  margin-top: 8px;
+}
+
+.meaning {
+  margin-top: 6px;
+}
+
+.strokes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+/* A character that is not in all.json is shown as plain text */
+.hw-missing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  opacity: 0.5;
+}

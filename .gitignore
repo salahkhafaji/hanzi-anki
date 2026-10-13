@@ -1,12 +1,20 @@
-.venv/
+# Python
 __pycache__/
 *.pyc
+.venv/
 .pytest_cache/
+*.egg-info/
 dist/
 
-# data and personal files (not committed)
+# Data you download or generate yourself
 data/all.json
 input/audio/*
-output/*
 !input/audio/.gitkeep
+output/*
 !output/.gitkeep
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

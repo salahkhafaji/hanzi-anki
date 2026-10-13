@@ -1,0 +1,16 @@
+{{FrontSide}}
+
+<hr id="answer">
+
+<div class="pinyin">{{Pinyin}}</div>
+<div class="meaning">{{Meaning}}</div>
+<div class="audio">{{Audio}}</div>
+
+<div id="hw-strokes" class="strokes"></div>
+
+<!-- Hidden field: stroke data as JSON, read by strokes.js -->
+<div id="hw-data" hidden>{{Strokes}}</div>
+
+<script>
+%%STROKES_JS%%
+</script>
