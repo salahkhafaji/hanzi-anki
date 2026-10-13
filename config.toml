@@ -1,0 +1,25 @@
+[deck]
+name = "Hanzi Strokes"
+deck_id = 1760400000001      # keep stable so re-imports update instead of duplicate
+model_id = 1760400000002     # keep stable
+
+[paths]
+all_json = "data/all.json"
+words = "input/words.txt"
+audio_dir = "input/audio"
+output = "output/hanzi.apkg"
+
+[animation]
+width = 120
+height = 120
+speed = 1.5
+delay_between_strokes = 150
+delay_between_loops = 1500
+
+[colors]
+stroke = "#1f2937"
+stroke_night = "#f2f2f2"
+radical = "#e11d48"
+outline = "#e5e7eb"
+outline_night = "#444444"
+highlight = "#2563eb"
