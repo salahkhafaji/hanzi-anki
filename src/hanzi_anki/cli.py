@@ -56,7 +56,14 @@ def main() -> None:
     build = commands.add_parser("build", help="read the words file and write the .apkg file")
     build.add_argument("--config", default="config.toml", help="path to config.toml (default: config.toml)")
     build.add_argument("--name", help="name of the new subdeck, for example \"Greetings\"")
+    window = commands.add_parser("gui", help="open the window app")
+    window.add_argument("--config", default="config.toml", help="path to config.toml (default: config.toml)")
     args = parser.parse_args()
+
+    if args.command == "gui":
+        from .gui import run_gui  # imported here so the command line does not need Tkinter
+
+        sys.exit(run_gui(Path(args.config)))
 
     try:
         config = load_config(Path(args.config))

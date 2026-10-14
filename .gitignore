@@ -9,6 +9,8 @@ dist/
 # Data you download or generate yourself
 data/all.json
 input/audio/*
+input/words.txt.bak
+hanzi-anki-error.log
 !input/audio/.gitkeep
 output/*
 !output/.gitkeep

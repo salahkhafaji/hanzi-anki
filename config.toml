@@ -1,5 +1,5 @@
 [deck]
-parent = "Chinese Word"     # your existing deck in Anki. Must match its name exactly
+parent = "Chinese Words"     # your existing deck in Anki. Must match its name exactly
 name = "Hanzi Strokes"       # default subdeck name (used when you just press Enter)
 first_number = 1             # number of the first subdeck, the next ones count up
 model_id = 1760400000002     # keep stable

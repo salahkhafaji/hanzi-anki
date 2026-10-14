@@ -25,6 +25,25 @@ To use another config file: `uv run hanzi-anki build --config path/to/config.tom
 After each build you get a short summary: entries built, characters found,
 missing characters and missing audio.
 
+## Window app
+
+```bash
+uv run hanzi-anki gui
+```
+
+A small window to type the subdeck name, edit the word list, choose audio files and build the deck.
+
+- The name box shows the full deck name and number before you build.
+- The table shows every entry. Rows with a missing audio file are red. The order in the table is the order in Anki.
+- **Browse...** copies the audio file into `input/audio/` for you.
+- **Paste lines...** adds many lines at once in the `words.txt` format.
+- **Build deck** saves `input/words.txt` and builds `output/hanzi.apkg`, the same as the command line.
+  The previous `words.txt` is kept as `words.txt.bak`. Comment lines (`#`) are not kept when the window saves.
+- Mistakes are shown in plain words in the Result box. Unexpected errors are written to
+  `hanzi-anki-error.log` next to `config.toml`.
+
+The window needs Tkinter, which comes with Python from uv. The command line does not need it.
+
 ## Subdecks
 
 Every build creates one numbered subdeck inside your existing deck, for example
@@ -78,6 +97,7 @@ The prefix is the `AUDIO_PREFIX` constant in `src/hanzi_anki/audio.py`.
 | Card style | `templates/style.css` |
 | Animation code | `templates/strokes.js` |
 | Colors, animation size and speed, parent deck | `config.toml` |
+| The window app (`hanzi-anki gui`) | `src/hanzi_anki/gui.py` |
 
 Colors live only in `config.toml`. Night mode uses `stroke_night` and `outline_night`.
 Templates use `%%name%%` placeholders that the build fills in from `config.toml`.
