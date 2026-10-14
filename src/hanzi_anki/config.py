@@ -12,13 +12,15 @@ class ConfigError(Exception):
 @dataclass
 class Config:
     root: Path  # folder that contains config.toml; all relative paths start here
-    deck_name: str
-    deck_id: int
+    parent_deck: str  # existing deck in Anki; the new subdeck goes inside it
+    deck_name: str  # default subdeck name
+    first_number: int
     model_id: int
     all_json: Path
     words: Path
     audio_dir: Path
     output: Path
+    subdecks_file: Path
     animation: dict  # width, height, speed, delay_between_strokes, delay_between_loops
     colors: dict  # stroke, stroke_night, radical, outline, outline_night, highlight
     templates_dir: Path
@@ -58,13 +60,15 @@ def load_config(config_path: Path) -> Config:
 
     return Config(
         root=root,
+        parent_deck=str(_value(deck, "deck", "parent")).strip(),
         deck_name=_value(deck, "deck", "name"),
-        deck_id=int(_value(deck, "deck", "deck_id")),
+        first_number=int(_value(deck, "deck", "first_number")),
         model_id=int(_value(deck, "deck", "model_id")),
         all_json=root / _value(paths, "paths", "all_json"),
         words=root / _value(paths, "paths", "words"),
         audio_dir=root / _value(paths, "paths", "audio_dir"),
         output=root / _value(paths, "paths", "output"),
+        subdecks_file=root / _value(paths, "paths", "subdecks"),
         animation=dict(animation),
         colors=dict(colors),
         templates_dir=root / "templates",

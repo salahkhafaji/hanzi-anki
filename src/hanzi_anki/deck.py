@@ -1,5 +1,6 @@
 """Build the Anki deck and write the .apkg file."""
 
+import hashlib
 import html
 import json
 import re
@@ -14,6 +15,7 @@ from .audio import find_audio, media_name, sound_tag
 from .config import Config
 from .parser import Entry, parse_words, split_characters
 from .strokes import build_strokes_json, load_all_json
+from .subdecks import Subdeck, deck_title
 
 # Anki keeps media whose name starts with an underscore, even if no card uses it.
 HANZI_WRITER_MEDIA_NAME = "_hanzi-writer.min.js"
@@ -26,6 +28,7 @@ class BuildError(Exception):
 @dataclass
 class BuildResult:
     output: Path
+    deck_title: str = ""
     entries_built: int = 0
     characters_found: set = field(default_factory=set)
     characters_missing: list = field(default_factory=list)
@@ -33,9 +36,16 @@ class BuildResult:
     warnings: list = field(default_factory=list)
 
 
-def note_guid(hanzi: str) -> str:
-    """Stable GUID from the hanzi text, so re-importing updates the same note."""
-    return genanki.guid_for(hanzi)
+def note_guid(subdeck_key: str, hanzi: str) -> str:
+    """Stable GUID from the subdeck and the hanzi text.
+    Importing the same entry again updates its note. The same hanzi in another
+    subdeck is a different note."""
+    return genanki.guid_for(subdeck_key, hanzi)
+
+
+def deck_id_for(title: str) -> int:
+    """Stable deck ID made from the full deck name, so every subdeck has its own ID."""
+    return int(hashlib.sha256(title.encode("utf-8")).hexdigest()[:12], 16)
 
 
 def _fill(text: str, values: dict) -> str:
@@ -90,8 +100,8 @@ def make_model(config: Config) -> genanki.Model:
     )
 
 
-def build_deck(config: Config) -> BuildResult:
-    """Read the input files, build the deck and write config.output."""
+def build_deck(config: Config, subdeck: Subdeck) -> BuildResult:
+    """Read the input files, build the subdeck and write config.output."""
     if not config.words.is_file():
         raise BuildError(f"Words file not found: {config.words}")
     if not config.hanzi_writer_js.is_file():
@@ -101,12 +111,13 @@ def build_deck(config: Config) -> BuildResult:
     entries, warnings = parse_words(config.words)
 
     model = make_model(config)
-    deck = genanki.Deck(config.deck_id, config.deck_name)
-    result = BuildResult(output=config.output, warnings=warnings)
+    title = deck_title(config.parent_deck, subdeck)
+    deck = genanki.Deck(deck_id_for(title), title)
+    result = BuildResult(output=config.output, deck_title=title, warnings=warnings)
     audio_files: dict[str, Path] = {}  # media name -> path on disk
 
     for entry in entries:
-        note = _make_note(entry, model, all_data, config, result, audio_files)
+        note = _make_note(entry, subdeck, model, all_data, config, result, audio_files)
         deck.add_note(note)
         result.entries_built += 1
 
@@ -114,7 +125,7 @@ def build_deck(config: Config) -> BuildResult:
     return result
 
 
-def _make_note(entry: Entry, model, all_data, config, result, audio_files) -> genanki.Note:
+def _make_note(entry: Entry, subdeck: Subdeck, model, all_data, config, result, audio_files) -> genanki.Note:
     chars = split_characters(entry.hanzi)
     if not chars:
         result.warnings.append(
@@ -154,7 +165,7 @@ def _make_note(entry: Entry, model, all_data, config, result, audio_files) -> ge
         # Escaped so the JSON is safe inside the HTML field; the card reads it with textContent.
         html.escape(strokes_json),
     ]
-    return genanki.Note(model=model, fields=fields, guid=note_guid(entry.hanzi))
+    return genanki.Note(model=model, fields=fields, guid=note_guid(subdeck.key, entry.hanzi))
 
 
 def _write_package(deck: genanki.Deck, config: Config, audio_files: dict) -> None:

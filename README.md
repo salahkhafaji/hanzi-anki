@@ -15,14 +15,31 @@ You need [uv](https://docs.astral.sh/uv/) and Python 3.11 or newer.
 ## Build
 
 ```bash
-uv run hanzi-anki build
+uv run hanzi-anki build --name "Greetings"
 ```
 
 The result is `output/hanzi.apkg`. In Anki use **File → Import**, or open the file on your phone.
+If you leave out `--name`, the tool asks for it (press Enter to use `name` from `config.toml`).
 To use another config file: `uv run hanzi-anki build --config path/to/config.toml`.
 
 After each build you get a short summary: entries built, characters found,
 missing characters and missing audio.
+
+## Subdecks
+
+Every build creates one numbered subdeck inside your existing deck, for example
+`Chinese Words::03 Greetings`.
+
+- `parent` in `config.toml` is the name of your deck in Anki. It must match exactly,
+  including capital letters and spaces, or Anki makes a new deck next to the old one.
+- You give the subdeck name with `--name`. The tool puts a number in front of it, so Anki
+  (which sorts subdecks by name) shows them in order.
+- Numbers are remembered in `data/subdecks.json`. A new name gets the next number. A name you
+  used before keeps its number (letter case does not matter), so a rebuild updates the same
+  subdeck. Keep this file: if you lose it, the numbering starts again.
+- `first_number` in `config.toml` is the number of the very first subdeck.
+- A failed build does not use up a number.
+- Anki cannot choose the deck at import time. The deck name is stored inside the `.apkg`.
 
 ## words.txt format
 
@@ -43,7 +60,7 @@ hanzi | pinyin | meaning | audio_file
 - The audio field may be empty (keep the last `|`, or leave it out).
 - Empty lines and lines starting with `#` are ignored.
 - Only Chinese characters get an animation. Punctuation, spaces, digits and Latin letters are skipped.
-- If the same hanzi appears twice, the later line replaces the earlier one.
+- If the same hanzi appears twice in one file, the later line replaces the earlier one.
 
 ## Audio
 
@@ -60,7 +77,7 @@ The prefix is the `AUDIO_PREFIX` constant in `src/hanzi_anki/audio.py`.
 | Card layout | `templates/front.html`, `templates/back.html` |
 | Card style | `templates/style.css` |
 | Animation code | `templates/strokes.js` |
-| Colors, animation size and speed, deck name | `config.toml` |
+| Colors, animation size and speed, parent deck | `config.toml` |
 
 Colors live only in `config.toml`. Night mode uses `stroke_night` and `outline_night`.
 Templates use `%%name%%` placeholders that the build fills in from `config.toml`.
@@ -68,9 +85,11 @@ Do not write `{{` in `strokes.js`: Anki reads it as a field tag.
 
 ## Re-importing
 
-`deck_id` and `model_id` in `config.toml` are fixed, and each note's GUID is made from its hanzi text.
-So when you import a new build, Anki updates existing cards instead of duplicating them.
-You can fix pinyin or meaning and import again. Do not change `deck_id` or `model_id`.
+`model_id` in `config.toml` is fixed, each subdeck has its own ID made from its full name, and each
+note's GUID is made from the subdeck name and the hanzi text. So when you import a new build of the
+same subdeck, Anki updates existing cards instead of duplicating them. You can fix pinyin or
+meaning and import again. Do not change `model_id` or `parent`.
+The same hanzi in a different subdeck is a separate card.
 If you change the card templates and Anki still shows the old layout after import, delete
 the "Hanzi Strokes" note type's old version or check **Tools → Manage Note Types**.
 

@@ -3,7 +3,8 @@ import sqlite3
 import zipfile
 from html import unescape
 
-from hanzi_anki.deck import build_deck, make_model, note_guid, render_templates
+from hanzi_anki.deck import build_deck, deck_id_for, make_model, note_guid, render_templates
+from hanzi_anki.subdecks import Subdeck
 
 
 def read_package(path, tmp_path):
@@ -16,9 +17,15 @@ def read_package(path, tmp_path):
     return notes, media
 
 
-def test_guid_is_stable_and_depends_on_hanzi_only():
-    assert note_guid("你好") == note_guid("你好")
-    assert note_guid("你好") != note_guid("你好吗")
+def test_guid_is_stable_and_depends_on_subdeck_and_hanzi():
+    assert note_guid("greetings", "你好") == note_guid("greetings", "你好")
+    assert note_guid("greetings", "你好") != note_guid("greetings", "你好吗")
+    assert note_guid("greetings", "你好") != note_guid("food", "你好")  # new note in a new subdeck
+
+
+def test_deck_id_is_stable_and_differs_per_subdeck():
+    assert deck_id_for("Chinese Words::01 A") == deck_id_for("Chinese Words::01 A")
+    assert deck_id_for("Chinese Words::01 A") != deck_id_for("Chinese Words::02 B")
 
 
 def test_model_id_comes_from_config(project):
@@ -26,20 +33,20 @@ def test_model_id_comes_from_config(project):
     assert make_model(config).model_id == config.model_id
 
 
-def test_rebuild_gives_same_guids(project, tmp_path):
+def test_rebuild_gives_same_guids(project, subdeck, tmp_path):
     _, config = project
-    build_deck(config)
+    build_deck(config, subdeck)
     first, _ = read_package(config.output, tmp_path / "a")
-    build_deck(config)
+    build_deck(config, subdeck)
     second, _ = read_package(config.output, tmp_path / "b")
     assert [g for g, _ in first] == [g for g, _ in second]
 
 
-def test_build_with_missing_character_and_missing_audio(project, tmp_path):
+def test_build_with_missing_character_and_missing_audio(project, subdeck, tmp_path):
     root, config = project
     with open(config.words, "a", encoding="utf-8") as f:
         f.write("龘 | dá | many dragons | no-such.mp3\n")
-    result = build_deck(config)
+    result = build_deck(config, subdeck)
 
     assert result.entries_built == 3
     assert result.characters_missing == ["龘"]
@@ -73,3 +80,26 @@ def test_night_mode_css_covers_anki_and_ankidroid_classes(project):
     for selector in (".nightMode", ".night_mode", ".card.nightMode", ".nightMode .card"):
         assert selector in night_block
     assert config.colors["outline_night"] in night_block
+
+
+def test_deck_is_a_numbered_subdeck_under_the_parent(project, tmp_path):
+    _, config = project
+    subdeck = Subdeck(name="Greetings", number=3, is_new=True)
+    result = build_deck(config, subdeck)
+    assert result.deck_title == "Chinese Words::03 Greetings"
+
+    folder = tmp_path / "unzipped"
+    with zipfile.ZipFile(config.output) as z:
+        z.extractall(folder)
+    db = sqlite3.connect(folder / "collection.anki2")
+    deck_names = [d["name"] for d in json.loads(db.execute("select decks from col").fetchone()[0]).values()]
+    assert "Chinese Words::03 Greetings" in deck_names
+
+
+def test_same_hanzi_in_another_subdeck_is_a_new_note(project, tmp_path):
+    _, config = project
+    build_deck(config, Subdeck(name="Greetings", number=1, is_new=True))
+    first, _ = read_package(config.output, tmp_path / "a")
+    build_deck(config, Subdeck(name="Food", number=2, is_new=True))
+    second, _ = read_package(config.output, tmp_path / "b")
+    assert {g for g, _ in first}.isdisjoint({g for g, _ in second})

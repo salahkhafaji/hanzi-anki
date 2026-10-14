@@ -1,6 +1,7 @@
 [deck]
-name = "Hanzi Strokes"
-deck_id = 1760400000001      # keep stable so re-imports update instead of duplicate
+parent = "Chinese Word"     # your existing deck in Anki. Must match its name exactly
+name = "Hanzi Strokes"       # default subdeck name (used when you just press Enter)
+first_number = 1             # number of the first subdeck, the next ones count up
 model_id = 1760400000002     # keep stable
 
 [paths]
@@ -8,6 +9,7 @@ all_json = "data/all.json"
 words = "input/words.txt"
 audio_dir = "input/audio"
 output = "output/hanzi.apkg"
+subdecks = "data/subdecks.json"   # remembers the number of each subdeck
 
 [animation]
 width = 120

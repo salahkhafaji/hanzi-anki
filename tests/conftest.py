@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from hanzi_anki.config import load_config
+from hanzi_anki.subdecks import Subdeck
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -40,3 +41,8 @@ def project(tmp_path):
     (tmp_path / "assets" / "hanzi-writer.min.js").write_text("/* fake library */", encoding="utf-8")
 
     return tmp_path, load_config(tmp_path / "config.toml")
+
+
+@pytest.fixture
+def subdeck():
+    return Subdeck(name="Greetings", number=1, is_new=True)

@@ -1,4 +1,3 @@
-# hanzi | pinyin | meaning | audio_file
 你好 | nǐ hǎo | hello | 你好.mp3
 你好吗 | nǐ hǎo ma | how are you? | 你好吗.mp3
 我很好 | wǒ hěn hǎo | I am fine | 我很好.mp3

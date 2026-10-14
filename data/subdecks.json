@@ -1,0 +1,12 @@
+{
+  "subdecks": {
+    "greetings": {
+      "name": "Greetings",
+      "number": 1
+    },
+    "gre": {
+      "name": "Gre",
+      "number": 2
+    }
+  }
+}
