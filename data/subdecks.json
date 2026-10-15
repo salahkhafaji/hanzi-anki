@@ -1,4 +1,56 @@
 {
   "subdecks": {
+    "middle, product, early, dawn (中 品 早 旦)": {
+      "name": "Middle, Product, Early, Dawn (中 品 早 旦)",
+      "number": 1
+    },
+    "petty person, good, hello, question (小人 好 你好 吗)": {
+      "name": "Petty Person, Good, Hello, Question (小人 好 你好 吗)",
+      "number": 2
+    },
+    "very, i, how are you (很 我 你好吗)": {
+      "name": "Very, I, How Are You (很 我 你好吗)",
+      "number": 3
+    },
+    "up, down, not, to be, is it or not (上 下 不 是 是不是))": {
+      "name": "Up, Down, Not, To Be, Is It or Not (上 下 不 是 是不是))",
+      "number": 4
+    },
+    "is not, are you ahmed (不是 你是ahmed吗)": {
+      "name": "Is Not, Are You Ahmed (不是 你是Ahmed吗)",
+      "number": 5
+    },
+    "good morning, good evening (早上好 你早 晚上好)": {
+      "name": "Good Morning, Good Evening (早上好 你早 晚上好)",
+      "number": 6
+    },
+    "call, name, i am alaa (叫 名字 我是alaa)": {
+      "name": "Call, Name, I Am Alaa (叫 名字 我是alaa)",
+      "number": 7
+    },
+    "king, again, goodbye (王 再 再见)": {
+      "name": "King, Again, Goodbye (王 再 再见)",
+      "number": 8
+    },
+    "teacher, student (老师 学生)": {
+      "name": "Teacher, Student (老师 学生)",
+      "number": 9
+    },
+    "thanks, thank you (谢谢 谢谢你)": {
+      "name": "Thanks, Thank You (谢谢 谢谢你)",
+      "number": 10
+    },
+    "conversation": {
+      "name": "Conversation",
+      "number": 11
+    },
+    "also, he/she, know, happy (也 他 她 认识 高兴)": {
+      "name": "Also, He/She, Know, Happy (也 他 她 认识 高兴)",
+      "number": 12
+    },
+    "first meet (认识你很高兴)": {
+      "name": "First Meet (认识你很高兴)",
+      "number": 13
+    }
   }
 }
